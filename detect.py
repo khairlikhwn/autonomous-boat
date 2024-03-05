@@ -43,8 +43,13 @@ def run(model: str, max_results: int, score_threshold: float,
     width: The width of the frame captured from the camera.
     height: The height of the frame captured from the camera.
   """
-
+  # Initialize variables
   position = "none"
+  object_name = "none"
+  object_width = 0
+  object_height = 0
+  SPEED_MEDIUM = 0.3
+  SPEED_SLOW = 0.1
 
   # Start capturing video input from the camera
   cap = cv2.VideoCapture(0)
@@ -92,10 +97,10 @@ def run(model: str, max_results: int, score_threshold: float,
       )
 
     # Define the region of interest (ROI)
-    roi_top = int(image.shape[0] * 0.1)  # 10% from the top
-    roi_bottom = int(image.shape[0] * 0.9)  # 10% from the bottom
-    roi_left = int(image.shape[1] * 0.1)  # 10% from the left
-    roi_right = int(image.shape[1] * 0.9)  # 10% from the right
+    roi_top = int(image.shape[0] * 0.25)  # 10% from the top
+    roi_bottom = int(image.shape[0] * 0.75)  # 10% from the bottom
+    roi_left = int(image.shape[1] * 0.25)  # 10% from the left
+    roi_right = int(image.shape[1] * 0.75)  # 10% from the right
 
     # Crop the image
     image = image[roi_top:roi_bottom, roi_left:roi_right]
@@ -121,27 +126,28 @@ def run(model: str, max_results: int, score_threshold: float,
     
 
     if detection_result_list:
-        current_frame, position = visualize(current_frame, detection_result_list[0])
+        current_frame, position, object_name, object_width, object_height = visualize(current_frame, detection_result_list[0])
         detection_frame = current_frame
 
         # Determine position and adjust motor speed
         if position == "left":
-            HBridge.setMotorLeft(0.1)  # slow down left motor, full speed right motor
-            HBridge.setMotorRight(0.3)
-        elif position == "middle":
-            HBridge.setMotorLeft(0.3)  # full speed both motors
-            HBridge.setMotorRight(0.3)
-        else:  # position == right"
-            HBridge.setMotorLeft(0.3)  # full speed left motor, slow down right motor
-            HBridge.setMotorRight(0.1)
+            HBridge.setMotorLeft(SPEED_SLOW)  # slow down left motor, full speed right motor
+            HBridge.setMotorRight(SPEED_MEDIUM)
+        if position == "middle":
+            HBridge.setMotorLeft(SPEED_MEDIUM)  # full speed both motors
+            HBridge.setMotorRight(SPEED_MEDIUM)
+        if position == "right":
+            HBridge.setMotorLeft(SPEED_MEDIUM)  # full speed left motor, slow down right motor
+            HBridge.setMotorRight(SPEED_SLOW)
 
         if not detection_result_list[0].detections:
             position = "none"
+            object_name = "none"
             HBridge.setMotorLeft(0)  
-            HBridge.setMotorRight(0)
+            HBridge.setMotorRight(0.05)
 
         speedleft, speedright = HBridge.getMotorPowers()
-        print("left motor: " + str(speedleft) + ", right motor: " + str(speedright) + ", pos: " + position)
+        print("left: " + str(speedleft) + ", right: " + str(speedright) + ", pos: " + position + ", object: " + object_name + ", width: " + str(object_width) + ", height: " + str(object_height))
 
         detection_result_list.clear()
 
@@ -149,7 +155,7 @@ def run(model: str, max_results: int, score_threshold: float,
         cv2.imshow('object_detection', detection_frame)
 
     # Stop the program if the ESC key is pressed.
-    if cv2.waitKey(1) == 27:
+    if cv2.waitKey(1) == 27 or object_width > 500:
       break
 
   detector.close()
@@ -170,7 +176,7 @@ def main():
       '--maxResults',
       help='Max number of detection results.',
       required=False,
-      default=5)
+      default=1)
   parser.add_argument(
       '--scoreThreshold',
       help='The score threshold of detection results.',

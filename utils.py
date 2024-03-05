@@ -35,7 +35,12 @@ def visualize(
   Returns:
     Image with bounding boxes.
   """
-  position = "test"
+  # Initialize variables
+  position = "none"
+  category_name = "none"
+  object_width = 0
+  object_height = 0
+  
   # Draw position boundary lines
   boundary_line1_start = (image.shape[1] // 3, 0)
   boundary_line1_end = (image.shape[1] // 3, image.shape[0])
@@ -50,6 +55,8 @@ def visualize(
     bbox = detection.bounding_box
     start_point = bbox.origin_x, bbox.origin_y
     end_point = bbox.origin_x + bbox.width, bbox.origin_y + bbox.height
+    object_width = bbox.width
+    object_height = bbox.height
     # Use the orange color for high visibility.
     cv2.rectangle(image, start_point, end_point, (10, 255, 0), 2)
     
@@ -91,4 +98,4 @@ def visualize(
     cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_DUPLEX,
                 FONT_SIZE, TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
 
-  return image, position
+  return image, position, category_name, object_width, object_height
