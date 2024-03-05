@@ -35,6 +35,7 @@ def visualize(
   Returns:
     Image with bounding boxes.
   """
+  position = "test"
   # Draw position boundary lines
   boundary_line1_start = (image.shape[1] // 3, 0)
   boundary_line1_end = (image.shape[1] // 3, image.shape[0])
@@ -89,20 +90,5 @@ def visualize(
     # Draw the text
     cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_DUPLEX,
                 FONT_SIZE, TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
-    
-    # Determine position and adjust motor speed
-    if position == "left":
-        HBridge.setMotorLeft(0.1)  # slow down left motor, full speed right motor
-        HBridge.setMotorRight(0.3)
-    elif position == "middle":
-        HBridge.setMotorLeft(0.3)  # full speed both motors
-        HBridge.setMotorRight(0.3)
-    else:  # position == "
-        HBridge.setMotorLeft(0.3)  # full speed left motor, slow down right motor
-        HBridge.setMotorRight(0.1)
-        
-    speedleft, speedright = HBridge.getMotorPowers()
-    print("left motor: " + str(speedleft) + ", right motor: " + str(speedright) + ", pos: " + position)
 
-  return image
-
+  return image, position

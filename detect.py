@@ -16,6 +16,7 @@
 import argparse
 import sys
 import time
+import MDD10A as HBridge
 
 import cv2
 import mediapipe as mp
@@ -42,6 +43,8 @@ def run(model: str, max_results: int, score_threshold: float,
     width: The width of the frame captured from the camera.
     height: The height of the frame captured from the camera.
   """
+
+  position = "none"
 
   # Start capturing video input from the camera
   cap = cv2.VideoCapture(0)
@@ -115,11 +118,31 @@ def run(model: str, max_results: int, score_threshold: float,
     current_frame = image
     cv2.putText(current_frame, fps_text, text_location, cv2.FONT_HERSHEY_DUPLEX,
                 font_size, text_color, font_thickness, cv2.LINE_AA)
+    
 
     if detection_result_list:
-        # print(detection_result_list)
-        current_frame = visualize(current_frame, detection_result_list[0])
+        current_frame, position = visualize(current_frame, detection_result_list[0])
         detection_frame = current_frame
+
+        # Determine position and adjust motor speed
+        if position == "left":
+            HBridge.setMotorLeft(0.1)  # slow down left motor, full speed right motor
+            HBridge.setMotorRight(0.3)
+        elif position == "middle":
+            HBridge.setMotorLeft(0.3)  # full speed both motors
+            HBridge.setMotorRight(0.3)
+        else:  # position == right"
+            HBridge.setMotorLeft(0.3)  # full speed left motor, slow down right motor
+            HBridge.setMotorRight(0.1)
+
+        if not detection_result_list[0].detections:
+            position = "none"
+            HBridge.setMotorLeft(0)  
+            HBridge.setMotorRight(0)
+
+        speedleft, speedright = HBridge.getMotorPowers()
+        print("left motor: " + str(speedleft) + ", right motor: " + str(speedright) + ", pos: " + position)
+
         detection_result_list.clear()
 
     if detection_frame is not None:
