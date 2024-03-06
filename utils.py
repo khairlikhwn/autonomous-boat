@@ -40,6 +40,7 @@ def visualize(
   category_name = "none"
   object_width = 0
   object_height = 0
+  center_x = 0
   
   # Draw position boundary lines
   boundary_line1_start = (image.shape[1] // 3, 0)
@@ -98,4 +99,4 @@ def visualize(
     cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_DUPLEX,
                 FONT_SIZE, TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
 
-  return image, position, category_name, object_width, object_height
+  return image, position, category_name, object_width, object_height, center_x
