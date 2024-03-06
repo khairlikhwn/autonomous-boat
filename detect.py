@@ -50,7 +50,8 @@ def run(model: str, max_results: int, score_threshold: float,
     object_height = 0
     previous_error = 0
     center_x = 0
-    SPEED_MEDIUM = 0.3
+    adjustment = 0
+    SPEED_MEDIUM = 0.2
     SPEED_SLOW = 0.1
 
     # Start capturing video input from the camera
@@ -144,9 +145,9 @@ def run(model: str, max_results: int, score_threshold: float,
                 HBridge.setMotorRight(0.05)
             else:
                 pid.update(center_x)  # Update the PID controller with the current position
-                adjustment = pid.output / 100  # Get the adjustment from the PID controller
+                adjustment = pid.output / 1000  # Get the adjustment from the PID controller
 
-                print(adjustment)
+                #print(adjustment)
 
                 # Adjust motor speeds
                 HBridge.setMotorLeft(SPEED_MEDIUM - adjustment)
@@ -166,7 +167,7 @@ def run(model: str, max_results: int, score_threshold: float,
                 """
 
             speedleft, speedright = HBridge.getMotorPowers()
-            print("left: " + str(speedleft) + ", right: " + str(speedright) + ", pos: " + position + ", object: " + object_name + ", width: " + str(object_width) + ", height: " + str(object_height))
+            print("adjust: " + str(adjustment) + ", left: " + str(speedleft) + ", right: " + str(speedright) + ", pos: " + position + ", object: " + object_name + ", width: " + str(object_width) + ", height: " + str(object_height))
 
             detection_result_list.clear()
 
@@ -183,7 +184,7 @@ def run(model: str, max_results: int, score_threshold: float,
 
 
 class PID:
-    def __init__(self, P=0.2, I=0.0, D=0.0):
+    def __init__(self, P=0.25, I=0, D=0):
         self.Kp = P
         self.Ki = I
         self.Kd = D
