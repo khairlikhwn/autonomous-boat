@@ -146,12 +146,33 @@ def run(model: str, max_results: int, score_threshold: float,
             else:
                 pid.update(center_x)  # Update the PID controller with the current position
                 adjustment = pid.output / 1000  # Get the adjustment from the PID controller
-
                 #print(adjustment)
 
-                # Adjust motor speeds
-                HBridge.setMotorLeft(SPEED_MEDIUM - adjustment)
-                HBridge.setMotorRight(SPEED_MEDIUM + adjustment)
+                if object_name == "obstacle":
+                    # Adjust motor speeds
+                    HBridge.setMotorLeft(SPEED_MEDIUM - adjustment)
+                    HBridge.setMotorRight(SPEED_MEDIUM + adjustment)
+                
+                    if (object_width > 500):
+                        print("Avoiding obstacle")
+                        HBridge.setMotorLeft(SPEED_MEDIUM)
+                        HBridge.setMotorRight(SPEED_SLOW)
+                        time.sleep(3)
+                        HBridge.setMotorLeft(SPEED_SLOW)
+                        HBridge.setMotorRight(SPEED_MEDIUM)
+                        time.sleep(3)
+
+                if object_name == "checkpoint":
+                    # Adjust motor speeds
+                    HBridge.setMotorLeft(SPEED_MEDIUM - adjustment)
+                    HBridge.setMotorRight(SPEED_MEDIUM + adjustment)
+
+                    if (object_width > 500):
+                        print("Move to next checkpoint")
+                        HBridge.setMotorLeft(0)
+                        HBridge.setMotorRight(SPEED_SLOW)
+                        time.sleep(2)
+                        break
 
                 """
                 # Adjust motor speeds
@@ -175,7 +196,7 @@ def run(model: str, max_results: int, score_threshold: float,
             cv2.imshow('object_detection', detection_frame)
 
         # Stop the program if the ESC key is pressed.
-        if cv2.waitKey(1) == 27 or object_width > 500:
+        if cv2.waitKey(1) == 27:
             break
 
     detector.close()
