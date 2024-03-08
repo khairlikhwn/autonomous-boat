@@ -30,6 +30,8 @@ from utils import visualize
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
 
+SPEED_MEDIUM = 0.2
+SPEED_SLOW = 0.1
 
 def run(model: str, max_results: int, score_threshold: float, 
         camera_id: int, width: int, height: int) -> None:
@@ -43,16 +45,16 @@ def run(model: str, max_results: int, score_threshold: float,
         width: The width of the frame captured from the camera.
         height: The height of the frame captured from the camera.
     """
+
     # Initialize variables
     position = "none"
     object_name = "none"
     object_width = 0
     object_height = 0
-    previous_error = 0
     center_x = 0
     adjustment = 0
-    SPEED_MEDIUM = 0.2
-    SPEED_SLOW = 0.1
+    count_checkpoint = 1
+    count_obstacle = 1
 
     # Start capturing video input from the camera
     cap = cv2.VideoCapture(0)
@@ -141,51 +143,55 @@ def run(model: str, max_results: int, score_threshold: float,
             if not detection_result_list[0].detections:
                 position = "none"
                 object_name = "none"
-                HBridge.setMotorLeft(0)  
-                HBridge.setMotorRight(0.05)
+                HBridge.setMotorLeft(-0.1)  
+                HBridge.setMotorRight(0.1)
             else:
                 pid.update(center_x)  # Update the PID controller with the current position
                 adjustment = pid.output / 1000  # Get the adjustment from the PID controller
                 #print(adjustment)
 
+                # If object detected
                 if object_name == "obstacle":
                     # Adjust motor speeds
                     HBridge.setMotorLeft(SPEED_MEDIUM - adjustment)
                     HBridge.setMotorRight(SPEED_MEDIUM + adjustment)
                 
-                    if (object_width > 500):
-                        print("Avoiding obstacle")
-                        HBridge.setMotorLeft(SPEED_MEDIUM)
-                        HBridge.setMotorRight(SPEED_SLOW)
-                        time.sleep(3)
-                        HBridge.setMotorLeft(SPEED_SLOW)
-                        HBridge.setMotorRight(SPEED_MEDIUM)
-                        time.sleep(3)
+                    # If obstacle is reached
+                    if (object_width > 400):
+                        print(f"Obstacle {count_obstacle} reached")
 
+                        if count_obstacle == 1:
+                            turnRightLeft()
+                        elif count_obstacle == 2:
+                            turnLeftRight()
+                        elif count_obstacle == 3:
+                            turnRightLeft()
+                        elif count_obstacle == 4:
+                            turnLeftRight()
+                        count_obstacle += 1
+
+                # If checkpoint detected
                 if object_name == "checkpoint":
                     # Adjust motor speeds
                     HBridge.setMotorLeft(SPEED_MEDIUM - adjustment)
                     HBridge.setMotorRight(SPEED_MEDIUM + adjustment)
 
+                    # If checkpoint is reached
                     if (object_width > 500):
-                        print("Move to next checkpoint")
+                        print(f"Checkpoint {count_checkpoint} reached")
+                        if count_checkpoint == 1:
+                            turnLeft()
+                        elif count_checkpoint == 2:
+                            uturn()
+                        elif count_checkpoint == 3:
+                            turnRight()
+                        elif count_checkpoint == 4:
+                            print("Finish")
+                            break
                         HBridge.setMotorLeft(0)
                         HBridge.setMotorRight(SPEED_SLOW)
                         time.sleep(2)
-                        break
-
-                """
-                # Adjust motor speeds
-                if position == "left":
-                    HBridge.setMotorLeft(SPEED_SLOW - kd * derivative)  # slow down left motor, full speed right motor
-                    HBridge.setMotorRight(SPEED_MEDIUM)
-                if position == "middle":
-                    HBridge.setMotorLeft(SPEED_MEDIUM)  # full speed both motors
-                    HBridge.setMotorRight(SPEED_MEDIUM)
-                if position == "right":
-                    HBridge.setMotorLeft(SPEED_MEDIUM)  # full speed left motor, slow down right motor
-                    HBridge.setMotorRight(SPEED_SLOW - kd * derivative)
-                """
+                        count_checkpoint += 1
 
             speedleft, speedright = HBridge.getMotorPowers()
             print("adjust: " + str(adjustment) + ", left: " + str(speedleft) + ", right: " + str(speedright) + ", pos: " + position + ", object: " + object_name + ", width: " + str(object_width) + ", height: " + str(object_height))
@@ -255,6 +261,49 @@ class PID:
         self.sample_time = sample_time
 
 
+def turnRight():
+    print("Turn right")
+    HBridge.setMotorLeft(SPEED_SLOW)
+    HBridge.setMotorRight(-SPEED_SLOW)
+    time.sleep(2)
+
+
+def turnLeft():
+    print("Turn left")
+    HBridge.setMotorLeft(-SPEED_SLOW)
+    HBridge.setMotorRight(SPEED_SLOW)
+    time.sleep(2)
+
+
+def turnRightLeft():
+    print("Turn right")
+    HBridge.setMotorLeft(SPEED_MEDIUM)
+    HBridge.setMotorRight(SPEED_SLOW)
+    time.sleep(2)
+    print("Turn left")
+    HBridge.setMotorLeft(SPEED_SLOW)
+    HBridge.setMotorRight(SPEED_MEDIUM)
+    time.sleep(2)
+
+
+def turnLeftRight():
+    print("Turn left")
+    HBridge.setMotorLeft(SPEED_SLOW)
+    HBridge.setMotorRight(SPEED_MEDIUM)
+    time.sleep(2)
+    print("Turn right")
+    HBridge.setMotorLeft(SPEED_MEDIUM)
+    HBridge.setMotorRight(SPEED_SLOW)
+    time.sleep(2)
+
+
+def uturn():
+    print("Turn 180 degree")
+    HBridge.setMotorLeft(-SPEED_SLOW)
+    HBridge.setMotorRight(SPEED_SLOW)
+    time.sleep(5)
+
+
 def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -274,7 +323,7 @@ def main():
         help='The score threshold of detection results.',
         required=False,
         type=float,
-        default=0.65)
+        default=0.80)
     # Finding the camera ID can be very reliant on platform-dependent methods. 
     # One common approach is to use the fact that camera IDs are usually indexed sequentially by the OS, starting from 0. 
     # Here, we use OpenCV and create a VideoCapture object for each potential ID with 'cap = cv2.VideoCapture(i)'.
