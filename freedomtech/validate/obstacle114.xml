@@ -1,0 +1,26 @@
+<annotation>
+	<folder>obstacle after</folder>
+	<filename>obstacle114.jpg</filename>
+	<path>C:\Users\User\OneDrive - Universiti Teknologi PETRONAS\EEB4043 Integrated System Design Project 2\freedomtech\autonomous-boat\obstacle after\obstacle114.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>480</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>obstacle</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>575</xmin>
+			<ymin>357</ymin>
+			<xmax>612</xmax>
+			<ymax>417</ymax>
+		</bndbox>
+	</object>
+</annotation>
