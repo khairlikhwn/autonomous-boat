@@ -1,0 +1,38 @@
+<annotation>
+	<folder>objects</folder>
+	<filename>obstacle365.jpg</filename>
+	<path>C:\Users\geepe\Desktop\Learning Materials\4th year 2nd\ISDP2\Khai's img\objects\obstacle365.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>480</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>obstacle</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>351</xmin>
+			<ymin>210</ymin>
+			<xmax>364</xmax>
+			<ymax>219</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>checkpoint</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>266</xmin>
+			<ymin>190</ymin>
+			<xmax>280</xmax>
+			<ymax>208</ymax>
+		</bndbox>
+	</object>
+</annotation>

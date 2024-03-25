@@ -30,10 +30,14 @@ io.setwarnings(False)
 #	PWM	 on		on		  off		  on
 
 # The pins configuration for Model B Revision 1.0 
-leftMotor_DIR_pin = 22
-io.setup(leftMotor_DIR_pin, io.OUT)
 
 rightMotor_DIR_pin = 17
+rightMotor_PWM_pin = 27
+leftMotor_DIR_pin = 22
+leftMotor_PWM_pin = 23
+
+io.setup(leftMotor_DIR_pin, io.OUT)
+
 io.setup(rightMotor_DIR_pin, io.OUT)
 
 io.output(leftMotor_DIR_pin, False)
@@ -43,8 +47,7 @@ io.output(rightMotor_DIR_pin, False)
 
 # Here we configure the GPIO settings for the left and right motors spinning speed. 
 
-leftMotor_PWM_pin = 23
-rightMotor_PWM_pin = 27
+
 
 io.setup(leftMotor_PWM_pin, io.OUT)
 io.setup(rightMotor_PWM_pin, io.OUT)

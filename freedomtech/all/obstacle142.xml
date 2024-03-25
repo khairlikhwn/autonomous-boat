@@ -1,0 +1,38 @@
+<annotation>
+	<folder>images</folder>
+	<filename>obstacle142.jpg</filename>
+	<path>C:\Users\geepe\Desktop\Learning Materials\4th year 2nd\ISDP2\Khai's img\images\obstacle142.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>480</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>obstacle</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>252</xmin>
+			<ymin>326</ymin>
+			<xmax>288</xmax>
+			<ymax>356</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>checkpoint</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>483</xmin>
+			<ymin>294</ymin>
+			<xmax>507</xmax>
+			<ymax>333</ymax>
+		</bndbox>
+	</object>
+</annotation>

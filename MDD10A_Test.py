@@ -4,7 +4,7 @@
 
 import sys, tty, termios, os
 import MDD10A as HBridge
-#from picamera import PiCamera
+from picamera2 import Picamera2
 import time
 import glob
 
@@ -25,9 +25,15 @@ print("x: exit")
 print("o: take obstacle picture")
 print("p: take waypoint picture")
 
-#camera = PiCamera()
+#camera = Picamera2()
 #camera.resolution = (640, 480)
 #camera.rotation = 180
+picam2 = Picamera2()
+picam2.preview_configuration.main.size = (640,480)
+picam2.preview_configuration.main.format = "RGB888"
+picam2.preview_configuration.align()
+picam2.configure("preview")
+picam2.start()
 time.sleep(2)
 
 # The catch method can determine which key has been pressed
@@ -81,7 +87,7 @@ while True:
 		# accelerate the RaPi car
 		obstacle_images = glob.glob("/home/koi/Desktop/obstacle/obstacle*.jpg")
 		obstacle_number = len(obstacle_images) + 1
-		camera.capture("/home/koi/Desktop/obstacle/obstacle{}.jpg".format(obstacle_number))
+		picam2.capture_file("/home/koi/Desktop/obstacle/obstacle{}.jpg".format(obstacle_number))
 		obstacle_capture_count += 1
 		obstacle_images = glob.glob("/home/koi/Desktop/obstacle/obstacle*.jpg")
 		printscreen()
@@ -99,7 +105,7 @@ while True:
 		# accelerate the RaPi car
 		waypoint_images = glob.glob("/home/koi/Desktop/waypoint/waypoint*.jpg")
 		waypoint_number = len(waypoint_images) + 1
-		camera.capture("/home/koi/Desktop/waypoint/waypoint{}.jpg".format(waypoint_number))
+		picam2.capture_file("/home/koi/Desktop/waypoint/waypoint{}.jpg".format(waypoint_number))
 		waypoint_capture_count += 1
 		waypoint_images = glob.glob("/home/koi/Desktop/waypoint/waypoint*.jpg")
 		printscreen()

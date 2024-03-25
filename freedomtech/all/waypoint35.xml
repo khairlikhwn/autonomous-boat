@@ -1,0 +1,26 @@
+<annotation>
+	<folder>images</folder>
+	<filename>waypoint35.jpg</filename>
+	<path>C:\Users\geepe\Desktop\Learning Materials\4th year 2nd\ISDP2\Khai's img\images\waypoint35.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>480</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>checkpoint</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>553</xmin>
+			<ymin>200</ymin>
+			<xmax>634</xmax>
+			<ymax>316</ymax>
+		</bndbox>
+	</object>
+</annotation>

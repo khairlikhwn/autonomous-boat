@@ -143,21 +143,21 @@ def run(model: str, max_results: int, score_threshold: float,
             if not detection_result_list[0].detections:
                 position = "none"
                 object_name = "none"
-                HBridge.setMotorLeft(-0.1)  
-                HBridge.setMotorRight(0.1)
+                HBridge.setMotorLeft(0.05)  
+                HBridge.setMotorRight(-0.05)
             else:
                 pid.update(center_x)  # Update the PID controller with the current position
                 adjustment = pid.output / 1000  # Get the adjustment from the PID controller
                 #print(adjustment)
 
                 # If object detected
-                if object_name == "obstacle":
+                if object_name == "obstacles":
                     # Adjust motor speeds
                     HBridge.setMotorLeft(SPEED_MEDIUM - adjustment)
                     HBridge.setMotorRight(SPEED_MEDIUM + adjustment)
                 
                     # If obstacle is reached
-                    if (object_width > 400):
+                    if (object_width > 500):
                         print(f"Obstacle {count_obstacle} reached")
 
                         if count_obstacle == 1:
@@ -177,7 +177,7 @@ def run(model: str, max_results: int, score_threshold: float,
                     HBridge.setMotorRight(SPEED_MEDIUM + adjustment)
 
                     # If checkpoint is reached
-                    if (object_width > 500):
+                    if (object_width > 250):
                         print(f"Checkpoint {count_checkpoint} reached")
                         if count_checkpoint == 1:
                             turnLeft()
